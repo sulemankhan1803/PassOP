@@ -5,8 +5,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 
 // Connection URL
-const url = "mongodb://localhost:27017";
+// const url = "mongodb://localhost:27017";
+
+const url = process.env.MONGO_URI;
 const client = new MongoClient(url);
+// console.log(url)
 
 const dbName = "passop";
 let app = express();
@@ -26,13 +29,23 @@ app.get("/", async (req, res) => {
 
 // Save all the passwords
 app.post("/", async (req, res) => {
-    const password = req.body;
+  const password = req.body;
+
+  if (!password.site || !password.username || !password.password) {
+    return res.status(400).json({ success: false, error: "All fields are required." });
+  }
+
+  try {
     const db = client.db(dbName);
     const collection = db.collection("passwords");
-    const findResult = await collection.insertOne(password)
+    const findResult = await collection.insertOne(password);
     res.send({ success: true, result: findResult });
-    // res.send(req.body);
+  } catch (err) {
+    console.error("Error saving password:", err);
+    res.status(500).json({ success: false, error: "Internal server error while saving password." });
+  }
 });
+
 
 // Delete a password
 app.delete("/", async(req, res) => {

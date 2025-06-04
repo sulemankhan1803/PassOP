@@ -29,12 +29,14 @@ const Manager = () => {
     }
   };
 
+
   const savePassword = async () => {
-    if (
-      form.site.length > 3 &&
-      form.username.length > 3 &&
-      form.password.length > 3
-    ) {
+  if (
+    form.site.length > 3 &&
+    form.username.length > 3 &&
+    form.password.length > 3
+  ) {
+    try {
       if (form.id) {
         await fetch("http://localhost:3000/", {
           method: "DELETE",
@@ -43,19 +45,29 @@ const Manager = () => {
         });
       }
 
-      setPasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
-      await fetch("http://localhost:3000/", {
+      const res = await fetch("http://localhost:3000/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, id: uuidv4() }),
       });
 
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || "Unknown error occurred");
+      }
+
+      setPasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
       setForm({ site: "", username: "", password: "" });
-      toast("Password saved!");
-    } else {
-      toast("Error: Password not saved!");
+      toast.success("Password saved!");
+    } catch (error) {
+      toast.error(`Error: ${error.message}`);
     }
-  };
+  } else {
+    toast.error("Please fill all fields with more than 3 characters.");
+  }
+};
+
 
   const deletePassword = async (id) => {
     let c = confirm("Do you really want to delete this password ?");
