@@ -9,8 +9,10 @@ const Manager = () => {
   const [form, setForm] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setPasswordArray] = useState([]);
 
+  const url = "https://passop-in7e.onrender.com/"
+  // const url = "http://localhost:3000/"
   const getPasswords = async () => {
-    let req = await fetch("http://localhost:3000/");
+    let req = await fetch(url);
     let passwords = await req.json();
     setPasswordArray(passwords);
   };
@@ -38,14 +40,14 @@ const Manager = () => {
   ) {
     try {
       if (form.id) {
-        await fetch("http://localhost:3000/", {
+        await fetch(url, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: form.id }),
         });
       }
 
-      const res = await fetch("http://localhost:3000/", {
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, id: uuidv4() }),
@@ -75,7 +77,7 @@ const Manager = () => {
     if (c) {
       setPasswordArray(passwordArray.filter((item) => item.id !== id));
 
-      await fetch("http://localhost:3000/", {
+      await fetch(url, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
