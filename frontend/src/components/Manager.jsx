@@ -9,7 +9,7 @@ const Manager = () => {
   const [form, setForm] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setPasswordArray] = useState([]);
 
-  const url = "https://passop-in7e.onrender.com/"
+  const url = "https://passop-backend-k0j3.onrender.com"
   // const url = "http://localhost:3000/"
   const getPasswords = async () => {
     let req = await fetch(url);
